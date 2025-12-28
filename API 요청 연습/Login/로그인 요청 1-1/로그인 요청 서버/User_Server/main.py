@@ -96,9 +96,9 @@ def create_user(user: UserCreate):
         conn.commit()
     except sqlite3.IntegrityError:
         conn.close()
-        raise HTTPException(status_code=400, detail="Username already exists")
+        raise HTTPException(status_code=400, detail="이미 존재하는 유저입니다.")
     conn.close()
-    return {"message": "User created"}
+    return {"message": "회원가입 성공!"}
 
 # ===== 로그인 =====
 @app.post("/login")
@@ -112,10 +112,10 @@ def login(user: UserLogin):
     row = cur.fetchone()
     conn.close()
     if not row:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="아이디 또는 비밀번호가 다릅니다.")
 
     hashed_input = hash_password(user.password)
     if hashed_input != row[0]:
-        raise HTTPException(status_code=400, detail="Incorrect password")
+        raise HTTPException(status_code=400, detail="비밀번호가 다릅니다.")
 
-    return {"message": f"User {user.username} logged in successfully"}
+    return {"message": f"{user.username}님 환영합니다."}
